@@ -13,7 +13,15 @@ class ChatList extends Component {
           showsVerticalScrollIndicator={false}
           renderItem={({item}) => (
             <TouchableOpacity
-              onPress={() => this.props.navigation.navigate('DetailChat')}>
+              onPress={() => {
+                let idArray = [this.state.currentUser, item.id];
+                idArray.sort();
+                this.props.navigation.navigate('DetailChat', {
+                  name: item._data.name,
+                  roomId: idArray[0] + idArray[1],
+                  current: this.state.currentUser,
+                });
+              }}>
               <Card>
                 <CardItem>
                   <Left>

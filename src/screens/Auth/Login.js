@@ -77,26 +77,8 @@ export default class Login extends Component {
   static navigationOptions = {
     header: null,
   };
-
-  addUser = async id => {
-    const {username, email, password, avatar} = this.state;
-    const ref = firestore().collection('users');
-    await firestore()
-      .collection('users')
-      .doc('LA')
-      .set({
-        id: id,
-        username: username,
-        email: email,
-        password: password,
-        avatar: avatar,
-      })
-      .then(() => this.props.navigation.navigate('Chats'))
-      .catch(error => this.setState({message: error.message}));
-  };
-
   signUp = async () => {
-    const {username, email, password} = this.state;
+    const {username, email, password, avatar} = this.state;
     if (username === '' || email === '' || password === '') {
       console.log('kosong');
       this.setState({
@@ -109,7 +91,18 @@ export default class Login extends Component {
           .createUserWithEmailAndPassword(email, password)
           .then(() => {
             const idToken = auth().currentUser.uid;
-            this.addUser(idToken);
+            firestore()
+              .collection('users')
+              .doc(idToken)
+              .set({
+                id: idToken,
+                username: username,
+                email: email,
+                password: password,
+                avatar: avatar,
+              })
+              .then(() => this.props.navigation.navigate('Chats'))
+              .catch(error => this.setState({message: error.message}));
             this.props.navigation.navigate('Chats');
           })
           .catch(error => this.setState({message: error.message}));
@@ -172,7 +165,9 @@ export default class Login extends Component {
     //   console.log(' urll5555 ' + error.message);
     // });
   };
+
   render() {
+    // this.addUser('jery');
     const {username, email, password} = this.state;
     console.log(this.state.message);
     return (

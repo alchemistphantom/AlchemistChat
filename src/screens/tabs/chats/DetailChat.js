@@ -1,30 +1,63 @@
+/* eslint-disable react-native/no-inline-styles */
 import React, {Component} from 'react';
-import {View, Text, StyleSheet} from 'react-native';
+import {View, Text, StyleSheet, FlatList} from 'react-native';
 import {
-  Container,
   Header,
   Body,
   Right,
   Thumbnail,
-  Left,
-  Footer,
   Button,
   Row,
   Col,
   Item,
+  Card,
 } from 'native-base';
 import {TouchableOpacity, TextInput} from 'react-native-gesture-handler';
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
-import {Navigation} from 'react-native-navigation';
+import {ENTRIES2} from '../../../static/entries';
+import firestore from '@react-native-firebase/firestore';
+import {firebase} from '@react-native-firebase/auth';
 
 export default class DetailChat extends Component {
   constructor(props) {
     super(props);
-    this.state = {};
+    this.state = {
+      chats: [],
+      text: '',
+    };
   }
+
+  async componentDidMount() {
+    const name = this.props.navigation.getParam('name', 'ChatRoom');
+    this.props.navigation.setParams({name});
+
+    const unsubscribe = firestore()
+      .collection('message')
+      .doc(this.props.navigation.getParam('roomId', ''))
+      .collection('text')
+      .orderBy('created', 'asc')
+      .onSnapshot(querySnapshot => {
+        this.setState({chats: querySnapshot.docs});
+      });
+  }
+
+  onSendPress = async () => {
+    console.log(this.state.text);
+    const ref = firestore()
+      .collection('message')
+      .doc(this.props.navigation.getParam('roomId', ''))
+      .collection('text');
+    await ref.add({
+      senderId: this.props.navigation.getParam('currentUser', ''),
+      text: this.state.text,
+      created: firestore.FieldValue.serverTimestamp(),
+    });
+    this.setState({text: ''});
+  };
 
   render() {
     const {navigate} = this.props.navigation;
+    const {text} = this.state;
     return (
       <View style={{flex: 1}}>
         <View style={{flex: 5}}>
@@ -37,11 +70,12 @@ export default class DetailChat extends Component {
                 <Thumbnail
                   small
                   source={{
-                    uri:
-                      'http://www.gstatic.com/tv/thumb/persons/589228/589228_v9_ba.jpg',
+                    uri: this.props.navigation.getParam('avatar', 'DetailChat'),
                   }}
                 />
-                <Text style={style.textHeader}>Mark </Text>
+                <Text style={style.textHeader}>
+                  {this.props.navigation.getParam('name', 'DetailChat')}
+                </Text>
               </View>
             </Body>
 
@@ -59,6 +93,52 @@ export default class DetailChat extends Component {
               </View>
             </Right>
           </Header>
+          <FlatList
+            data={this.state.chats}
+            showsVerticalScrollIndicator={false}
+            renderItem={({item}) => {
+              console.log(item);
+              console.log(
+                'yang login ' +
+                  this.props.navigation.getParam('currentUser', ''),
+              );
+              console.log('yang kirim ' + item._data.senderId);
+              if (
+                item._data.senderId !==
+                this.props.navigation.getParam('currentUser', '')
+              ) {
+                return (
+                  <Card style={style.incomming}>
+                    <Row>
+                      <Text
+                        style={{
+                          padding: 15,
+                        }}>
+                        {item._data.text}
+                        {this.props.navigation.getParam('currentId', '')}
+                      </Text>
+                    </Row>
+                  </Card>
+                );
+              } else {
+                return (
+                  <View style={{alignItems: 'flex-end'}}>
+                    <Card style={style.outSend}>
+                      <Row>
+                        <Text
+                          style={{
+                            padding: 15,
+                          }}>
+                          {item._data.text}
+                        </Text>
+                      </Row>
+                    </Card>
+                  </View>
+                );
+              }
+            }}
+            keyExtractor={item => item._data.created}
+          />
         </View>
         <Row style={style.footer}>
           <Col size={5}>
@@ -68,7 +148,12 @@ export default class DetailChat extends Component {
                   <Icon name="emoticon-outline" size={30} />
                 </Col>
                 <Col size={3}>
-                  <TextInput placeholder="Ketik pesan" multiline={true} />
+                  <TextInput
+                    placeholder="Ketik pesan"
+                    onChangeText={value => this.setState({text: value})}
+                    value={text}
+                    multiline={true}
+                  />
                 </Col>
                 <Col size={2}>
                   <Row style={style.row}>
@@ -84,7 +169,7 @@ export default class DetailChat extends Component {
             </Item>
           </Col>
           <Col size={1}>
-            <Button style={style.buttonSend}>
+            <Button style={style.buttonSend} onPress={() => this.onSendPress()}>
               <Icon size={20} color="white" name="send" />
             </Button>
           </Col>
@@ -146,6 +231,20 @@ const style = StyleSheet.create({
   },
   row: {
     alignItems: 'center',
+  },
+  incomming: {
+    height: 'auto',
+    width: 305,
+    margin: 10,
+    borderTopRightRadius: 40,
+    borderBottomLeftRadius: 40,
+  },
+  outSend: {
+    height: 'auto',
+    width: 305,
+    backgroundColor: '#E1FFC7',
+    borderTopRightRadius: 40,
+    borderBottomLeftRadius: 40,
   },
 });
 

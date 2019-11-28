@@ -10,6 +10,9 @@ import {TouchableOpacity} from 'react-native-gesture-handler';
 import Auth from './src/screens/Auth/';
 import TabNav from './src/screens/tabs';
 import DetailChat from './src/screens/tabs/chats/DetailChat';
+import usersList from './src/screens/tabs/calls/usersList';
+import Loading from './src/screens/loading/Loading';
+import Maps from './src/screens/maps/Map';
 
 const AppIndex = createAppContainer(Auth);
 export default class App extends Component {
@@ -50,10 +53,20 @@ const DetailChats = createStackNavigator(
     headerMode: 'none',
   },
 );
+const UsersList = createStackNavigator(
+  {
+    usersList: {screen: usersList},
+  },
+  {
+    headerMode: 'none',
+  },
+);
+
 const Tab = createStackNavigator(
   {
     TabNav: {screen: TabNav},
     DetailChat: {screen: DetailChats},
+    UsersList: {screen: UsersList},
   },
   {
     initialRouteName: 'TabNav',
@@ -63,11 +76,13 @@ const Tab = createStackNavigator(
 
 const StackNavigation = createSwitchNavigator(
   {
+    Loading: {screen: Loading},
+    Map: {screen: Maps},
     Auth: {screen: Auth},
     Tab: {screen: Tab},
   },
   {
-    initialRouteName: 'Auth',
+    initialRouteName: 'Map',
     defaultNavigationOptions: {
       headerMode: 'none',
       headerStyle: {

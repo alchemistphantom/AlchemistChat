@@ -93,3 +93,47 @@ export const ENTRIES1 = [
     },
   },
 ];
+
+export const ENTRIES2 = [
+  {
+    id: '1',
+    username: 'Alchemist Phantom',
+    avatar: 'https://i.imgur.com/UYiroysl.jpg',
+    message: {
+      total: 200,
+      last: 'Bukan Apa-apa hanya sebuah pilihan',
+      time: '12.00',
+    },
+  },
+  {
+    id: '2',
+    username: ' Mark Zuckerberg',
+    avatar: 'http://www.gstatic.com/tv/thumb/persons/589228/589228_v9_ba.jpg',
+    message: {
+      total: 200,
+      last: 'Join with my corporation...',
+      time: '12.00',
+    },
+  },
+  {
+    id: '3',
+    username: 'Alchemist Phantom',
+    avatar: 'https://i.imgur.com/UYiroysl.jpg',
+    message: {
+      total: 200,
+      last:
+        'To read data from the database, a Reference to the record is created, then data can be asynchronously fetched via the once method:',
+      time: '12.00',
+    },
+  },
+  {
+    id: '4',
+    username: ' Mark Zuckerberg',
+    avatar: 'http://www.gstatic.com/tv/thumb/persons/589228/589228_v9_ba.jpg',
+    message: {
+      total: 200,
+      last: 'iya',
+      time: '12.00',
+    },
+  },
+];
