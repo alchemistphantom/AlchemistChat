@@ -1,6 +1,6 @@
 import React, {Component} from 'react';
 import {View, Text, StyleSheet} from 'react-native';
-// import MapView, {PROVIDER_GOOGLE} from 'react-native-maps';
+import MapView, {PROVIDER_GOOGLE, Marker} from 'react-native-maps';
 
 export default class Map extends Component {
   constructor(props) {
@@ -12,16 +12,21 @@ export default class Map extends Component {
     return (
       <View style={styles.container}>
         <Text>Google Maps</Text>
-        {/* <MapView
+        <MapView
           provider={PROVIDER_GOOGLE} // remove if not using Google Maps
           style={styles.map}
           region={{
-            latitude: 37.78825,
-            longitude: -122.4324,
+            latitude: -6.6185626,
+            longitude: 106.8174133,
             latitudeDelta: 0.015,
             longitudeDelta: 0.0121,
-          }}
-        /> */}
+          }}>
+          <Marker
+            coordinate={{latitude: -6.6185626, longitude: 106.8174133}}
+            title={'Jery Lenas'}
+            description={'Bootcamp Arkademy'}
+          />
+        </MapView>
       </View>
     );
   }
@@ -29,9 +34,8 @@ export default class Map extends Component {
 
 const styles = StyleSheet.create({
   container: {
+    flex: 1,
     ...StyleSheet.absoluteFillObject,
-    height: 400,
-    width: 400,
     justifyContent: 'flex-end',
     alignItems: 'center',
   },
